@@ -327,7 +327,7 @@ const sendTokenResponse = (
   }
 
   res.status(statusCode).cookie("token", token, options).json({
-    cussess: true,
+    success: true,
     token,
   });
 };

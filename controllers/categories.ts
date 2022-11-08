@@ -17,7 +17,8 @@ const getCategories = asyncHandler(async (req, res) => {
 // @route   POST /api/v1/categories
 // @access  Private
 const createCategory = asyncHandler(async (req, res) => {
-  const category = await Category.create({ ...req.body, userId: req.user?.id });
+  let name = req.body.title.toLowerCase().split(" ").join("_");
+  const category = await Category.create({ ...req.body, userId: req.user?.id, name });
 
   res.status(200).json({
     success: true,
