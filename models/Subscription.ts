@@ -5,6 +5,7 @@ export interface ISubscription {
   icon?: string;
   currency: string;
   cost: number;
+  isFavorite: boolean;
   isDisabled?: boolean;
   firstBill?: string;
   cycleMultiplier?: number;
@@ -36,6 +37,10 @@ const SubscriptionSchema = new mongoose.Schema<ISubscription>(
     cost: {
       type: Number,
       required: [true, "Please add cost"],
+    },
+    isFavorite: {
+      type: Boolean,
+      default: false,
     },
     firstBill: Date,
     cycleMultiplier: {

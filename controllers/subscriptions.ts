@@ -59,6 +59,7 @@ const createSubscription = asyncHandler(
         currency: string;
         cost: number;
         isDisabled?: boolean;
+        isFavorite?: boolean;
         firstBill?: string;
         cycleMultiplier?: number;
         cyclePeriod?: "day" | "week" | "month" | "year";
@@ -109,12 +110,13 @@ const updateSubscription = asyncHandler(async (req: Request, res: Response) => {
     currency: req.body.currency,
     cost: req.body.cost,
     isDisabled: req.body.isDisabled,
+    isFavorite: req.body.isFavorite,
     firstBill: req.body.firstBill,
     cycleMultiplier: req.body.cycleMultiplier,
     cyclePeriod: req.body.cyclePeriod,
     durationMultiplier: req.body.durationMultiplier,
     durationPeriod: req.body.durationPeriod,
-    remindMe: req.body.remindMe,
+    remindMeBeforeDays: req.body.remindMeBeforeDays,
     description: req.body.description,
     categoryId: req.body.categoryId,
   };
@@ -156,10 +158,29 @@ const deleteSubscription = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+// @desc    Delete subscriptions
+// @route   DELETE /api/v1/subscriptions
+// @access  Private
+const deleteSubscriptions = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { subscriptions } = req.body;
+    console.log(subscriptions);
+    const result = await Subscription.deleteMany({
+      _id: { $in: [...subscriptions] },
+    });
+
+    res.status(200).json({
+      success: result.acknowledged,
+      data: result.deletedCount,
+    });
+  }
+);
+
 export {
   createSubscription,
   updateSubscription,
   deleteSubscription,
   getSubscriptions,
   getSubscription,
+  deleteSubscriptions,
 };

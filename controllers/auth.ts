@@ -36,6 +36,7 @@ const register = asyncHandler(
       name,
       email,
       password,
+      defaultCurrency: "EUR",
     });
 
     // grab token to send in email

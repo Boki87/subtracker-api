@@ -1,7 +1,7 @@
 import asyncHandler from "express-async-handler";
 import { Category } from "../models/Category";
 
-// @desc    Get category
+// @desc    Get categories
 // @route   GET /api/v1/categories
 // @access  Private
 const getCategories = asyncHandler(async (req, res) => {
@@ -13,12 +13,28 @@ const getCategories = asyncHandler(async (req, res) => {
   });
 });
 
+// @desc    Get category
+// @route   GET /api/v1/categories/:id
+// @access  Private
+const getCategory = asyncHandler(async (req, res) => {
+  const category = await Category.findById(req.params.id);
+
+  res.status(200).json({
+    success: true,
+    data: category,
+  });
+});
+
 // @desc    Create category
 // @route   POST /api/v1/categories
 // @access  Private
 const createCategory = asyncHandler(async (req, res) => {
   let name = req.body.title.toLowerCase().split(" ").join("_");
-  const category = await Category.create({ ...req.body, userId: req.user?.id, name });
+  const category = await Category.create({
+    ...req.body,
+    userId: req.user?.id,
+    name,
+  });
 
   res.status(200).json({
     success: true,
@@ -31,7 +47,8 @@ const createCategory = asyncHandler(async (req, res) => {
 // @access  private
 const updateCategory = asyncHandler(async (req, res) => {
   const fieldsToUpdate = {
-    name: req.body.name,
+    title: req.body.title,
+    name: req.body.title.toLowerCase().split(" ").join("_"),
   };
 
   const category = await Category.findByIdAndUpdate(
@@ -52,7 +69,7 @@ const updateCategory = asyncHandler(async (req, res) => {
   }
 
   res.status(200).json({
-    succes: true,
+    success: true,
     data: category,
   });
 });
@@ -79,4 +96,10 @@ const deleteCategory = asyncHandler(async (req, res) => {
   res.status(200).json({ success: true, data: {} });
 });
 
-export { createCategory, deleteCategory, updateCategory, getCategories };
+export {
+  createCategory,
+  deleteCategory,
+  updateCategory,
+  getCategories,
+  getCategory,
+};

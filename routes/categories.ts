@@ -5,6 +5,7 @@ import {
   deleteCategory,
   updateCategory,
   getCategories,
+  getCategory,
 } from "../controllers/categories";
 
 const router = express.Router();
@@ -17,6 +18,7 @@ router
 router
   .route("/:id")
   .put(protectedRoute, updateCategory)
-  .delete(protectedRoute, deleteCategory);
+  .delete(protectedRoute, deleteCategory)
+  .get(protectedRoute, getCategory);
 
 export default router;

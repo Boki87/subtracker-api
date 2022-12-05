@@ -5,6 +5,7 @@ import {
   deleteSubscription,
   getSubscriptions,
   getSubscription,
+  deleteSubscriptions,
 } from "../controllers/subscriptions";
 import { protectedRoute } from "../middleware/auth";
 
@@ -17,5 +18,6 @@ router
   .get(protectedRoute, getSubscription)
   .put(protectedRoute, updateSubscription)
   .delete(protectedRoute, deleteSubscription);
+router.route("/").delete(protectedRoute, deleteSubscriptions);
 
 export default router;
