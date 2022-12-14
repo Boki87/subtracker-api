@@ -19,16 +19,14 @@ const register = asyncHandler(
     const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
-      res.status(400);
-      throw new Error("Plase provide all fields");
+      res.status(400).json({success:false,message:"Plase provide all fields"})
     }
 
     // Test user
     const testUser = await User.findOne({ email });
 
     if (testUser) {
-      res.status(400);
-      throw new Error("Something went wrong");
+      res.status(400).json({ success: false, message: "User exists" });
     }
 
     // Create user
@@ -72,24 +70,22 @@ const login = asyncHandler(
 
     // Validate email & password
     if (!email || !password) {
-      res.status(400);
-      throw new Error("Email & password required");
+      res.status(400).json({success: false, message:"Email & password required"})
     }
 
     // Check user
     const user = await User.findOne({ email }).select("+password");
 
     if (!user) {
-      res.status(400);
-      throw new Error("Invalid credentials");
+      res.status(400).json({success: false, message: "Invalid credentials"})
+      return
     }
 
     // Check if password matches
     const isMatch = await user.matchPassword(password);
 
     if (!isMatch) {
-      res.status(401);
-      throw new Error("Invalid credentials");
+      res.status(401).json({success: false, message: "Invalid credentials"})
     }
 
     sendTokenResponse(user, 200, res);
@@ -108,8 +104,7 @@ const confirmEmail = asyncHandler(
     const { token } = req.query;
 
     if (!token) {
-      res.status(400);
-      throw new Error("Invalid token");
+      res.status(400).json({success: false, message: "Invalid token"})
     }
 
     const splitToken = token.split(".")[0];
@@ -125,8 +120,8 @@ const confirmEmail = asyncHandler(
     });
 
     if (!user) {
-      res.status(400);
-      throw new Error("Invalid token");
+      res.status(400).json({success: false, message: "Invalid token"})
+      return
     }
 
     //update confirmed to true
@@ -182,8 +177,7 @@ const updateDetails = asyncHandler(
     const userFromReq = req.user;
 
     if (!userFromReq) {
-      res.status(400);
-      throw new Error("Not logged in");
+      res.status(400).json({success: false, message: "Not logged in"})
     }
 
     const user = await User.findByIdAndUpdate(userFromReq.id, fieldsToUpdate, {
@@ -213,13 +207,12 @@ const updatePassword = asyncHandler(
   ) => {
     const user = await User.findById(req.user?.id).select("+password");
     if (!user) {
-      res.status(500);
-      throw new Error("Not authorized");
+      res.status(500).json({success: false, message: "Not authorized"})
+      return
     }
     // Check current password
     if (!(await user.matchPassword(req.body.currentPassword))) {
-      res.status(400);
-      throw new Error("Password is incorrect");
+      res.status(400).json({success:false, message: "Password is incorrect"})
     }
 
     user.password = req.body.newPassword;
@@ -236,8 +229,8 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
   const user = await User.findOne({ email: req.body.email });
 
   if (!user) {
-    res.status(401);
-    throw new Error("There is no user with this email");
+    res.status(401).json({success: false, message: "There is no user with this email"})
+    return
   }
 
   // Get reset token

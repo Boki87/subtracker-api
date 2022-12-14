@@ -8,7 +8,9 @@ import { Subscription } from "../models/Subscription";
 const getSubscriptions = asyncHandler(async (req: Request, res: Response) => {
   const subscriptions = await Subscription.find({
     userId: req.user?.id,
-  }).populate("category");
+  })
+    .populate("category")
+    .sort({ createdAt: -1 });
   // .populate({
   //    path: 'categoryId',
   //   select: "name"
